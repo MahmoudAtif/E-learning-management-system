@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block 'content' %} 
+{% load tags %}
+{% catrgories_tag as categories %}
+
+    {% include 'parts/modals.html' %}
+
+
+
+
+    <!-- PAGE TITLE
+    ================================================== -->
+    <header class="py-8 py-md-10" style="background-image: none;">
+        <div class="container text-center py-xl-2">
+            <h1 class="display-4 fw-semi-bold mb-0">Shop Cart</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-scroll justify-content-center">
+                    <li class="breadcrumb-item">
+                        <a class="text-gray-800" href="#">
+                            Home
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item text-gray-800 active" aria-current="page">
+                        Shop Cart
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        <!-- Img -->
+        <img class="d-none img-fluid" src="...html" alt="...">
+    </header>
+
+
+    <!-- SHOP CART
+    ================================================== -->
+    <div class="container pb-6 pb-xl-10">
+        <div class="row">
+            <div id="primary" class="content-area">
+                <main id="main" class="site-main ">
+                    <div class="page type-page status-publish hentry">
+                        <!-- .entry-header -->
+                        <div class="entry-content">
+                            <div class="woocommerce">
+                                <form class="woocommerce-cart-form table-responsive" action="#" method="post">
+                                    <table class="shop_table shop_table_responsive cart woocommerce-cart-form__contents">
+                                        <thead>
+                                            <tr>
+                                                <th class="product-name">Product</th>
+                                                <th class="product-price">Price</th>
+                                                <th class="product-subtotal">Subtotal</th>
+                                                <th class="product-remove">Remove</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {% for item in carts  %}
+                                            <tr id="cart-List" class="woocommerce-cart-form__cart-item cart_item "   >
+                                                <td  class="product-name" data-title="Product">
+                                                    <div class="d-flex align-items-center">
+                                                        <a href="{% url 'course_details' item.course.slug %}">
+                                                            <img src="{{item.course.image.url}}" class="attachment-shop_thumbnail size-shop_thumbnail wp-post-image" alt="">
+                                                        </a>
+                                                        <div class="ms-6">
+                                                            <a href="{% url 'course_details' item.course.slug %}">{{item.course.title}}</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <td class="product-price" data-title="Price">
+                                                    <span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">$</span>{{item.course.price}}</span>
+                                                </td>
+
+                                            
+
+                                                <td class="product-subtotal" data-title="Total">
+                                                    {% if item.course.discount %}
+                                                        <span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">$</span>{{item.course.get_total}}</span>
+                                                    {% else %}
+                                                        <span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">$</span>{{item.course.price}}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="product-remove">
+                                                   <a href="{% url 'remove_cart' item.course.slug %}" class="remove" aria-label="Remove this item">
+                                                        <i class="far fa-trash-alt text-secondary font-size-sm"></i>
+                                                    </a>
+
+                                                    {% comment %} <i style=" cursor:pointer;" class="far fa-trash-alt text-secondary font-size-sm" hx-delete="{% url 'remove_cart' item.course.slug %}" hx-target="#cart-List" hx-confirm="Are you sure to delete item" ></i>  {% endcomment %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- .entry-content -->
+                    </div>
+                </main>
+            </div>
+            <div id="secondary" class="sidebar" role="complementary">
+                <div class="cart-collaterals">
+                    <div class="cart_totals">
+                        <h2>Cart totals</h2>
+
+                        <table class="shop_table shop_table_responsive">
+                            <tbody>
+                                <tr class="cart-subtotal">
+                                    <th>Subtotal</th>
+                                    <td data-title="Subtotal"><span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">$</span>{{total_price}}</span></td>
+                                </tr>
+
+                                <tr class="order-total">
+                                    <th>Total</th>
+                                    <td data-title="Total"><strong><span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">$</span>{{total_price}}</span></strong> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="wc-proceed-to-checkout">
+                            {% if carts %}
+                            <a href="{% url 'checkout' %}" class="checkout-button button alt wc-forward">
+                                Proceed to checkout
+                            </a>
+                            {% else %}
+                                <a href="{% url 'courses' %}" class="checkout-button button alt wc-forward">
+                                    go to shopping
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CALL ACTION
+    ================================================== -->
+    <section class="py-6 py-md-11 border-top border-bottom" data-jarallax data-speed=".8" style="background-image: url(assets/img/illustrations/illustration-1.jpg)">
+        <div class="container text-center py-xl-4" data-aos="fade-up">
+            <div class="row">
+                <div class="col-xl-7 mx-auto">
+                    <h1 class="text-capitalize">Subscribe our newsletter</h1>
+                    <p class="text-capitalize font-size-lg mb-md-6 mb-4">Your download should start automatically, if not Click here. Should I give up, huh?.</p>
+                    <div class="mx-md-8">
+                        <form>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Enter your email" aria-label="Enter your email" aria-describedby="button-addon2">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary btn-sm-wide" type="button" id="button-addon2">Subscribe</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+{% endblock 'content' %} 
+  

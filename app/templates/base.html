@@ -1,0 +1,100 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<!-- Mirrored from transvelo.github.io/skola-html/5.1/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 26 Jan 2022 12:13:14 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'img/favicon.png' %} ">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&amp;family=Lora:wght@400;700&amp;family=Montserrat:wght@400;500;600;700&amp;family=Nunito:wght@400;700&amp;display=swap" rel="stylesheet">
+
+    <!-- Libs CSS -->
+    <link rel="stylesheet" href="{% static 'fonts/fontawesome/fontawesome.css' %} ">
+    <link rel="stylesheet" href="{% static 'libs/%40fancyapps/fancybox/dist/jquery.fancybox.min.css' %} ">
+    <link rel="stylesheet" href="{% static 'libs/aos/dist/aos.css' %} ">
+    <link rel="stylesheet" href="{% static 'libs/choices.js/public/assets/styles/choices.min.css' %} ">
+    <link rel="stylesheet" href="{% static 'libs/flickity-fade/flickity-fade.css' %} ">
+    <link rel="stylesheet" href="{% static 'libs/flickity/dist/flickity.min.css' %} ">
+    <link rel="stylesheet" href="{% static 'libs/highlightjs/styles/vs2015.css' %} ">
+    <link rel="stylesheet" href="{% static 'libs/jarallax/dist/jarallax.css' %} ">
+    <link rel="stylesheet" href="{% static 'libs/quill/dist/quill.core.css' %} " />
+
+    <!-- Map -->
+    <link href='../../../api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css' rel='stylesheet' />
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="{% static 'css/theme.min.css' %} ">
+
+    <title>Skola</title>
+    
+    {% comment %} <script src="https//kit.fontawesome.com/0e5fa0ea8a.js" crosorigin="anonymous"> </script> {% endcomment %}
+    <script src="https://kit.fontawesome.com/fe8aff2e0c.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.8.4"></script>
+</head>
+{% if checkout_complete %}
+    <body class="bg-white woocommerce-order-received" >
+{% else %}
+    <body class="bg-white " >
+{% endif %}
+    {% if not watch_course %}
+        {% include 'parts/navbar.html' %}
+    {% endif %}
+    
+   {% block 'content' %}
+    
+   {% endblock 'content' %}
+
+   {% include 'parts/footer.html' %}
+
+
+    <!-- JAVASCRIPT
+    ================================================== -->
+    <!-- Libs JS -->
+    <script src="{% static 'libs/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'libs/%40fancyapps/fancybox/dist/jquery.fancybox.min.js' %}"></script>
+    <script src="{% static 'libs/aos/dist/aos.js' %}"></script>
+    <script src="{% static 'libs/choices.js/public/assets/scripts/choices.min.js' %}"></script>
+    <script src="{% static 'libs/countup.js/dist/countUp.min.js' %}"></script>
+    <script src="{% static 'libs/dropzone/dist/min/dropzone.min.js' %}"></script>
+    <script src="{% static 'libs/flickity/dist/flickity.pkgd.min.js' %}"></script>
+    <script src="{% static 'libs/flickity-fade/flickity-fade.js' %}"></script>
+    <script src="{% static 'libs/highlightjs/highlight.pack.min.js' %}"></script>
+    <script src="{% static 'libs/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
+    <script src="{% static 'libs/isotope-layout/dist/isotope.pkgd.min.js' %}"></script>
+    <script src="{% static 'libs/jarallax/dist/jarallax.min.js' %}"></script>
+    <script src="{% static 'libs/jarallax/dist/jarallax-video.min.js' %}"></script>
+    <script src="{% static 'libs/jarallax/dist/jarallax-element.min.js' %}"></script>
+    <script src="{% static 'libs/parallax-js/dist/parallax.min.js' %}"></script>
+    <script src="{% static 'libs/quill/dist/quill.min.js' %}"></script>
+    <script src="{% static 'libs/smooth-scroll/dist/smooth-scroll.min.js' %}"></script>
+    <script src="{% static 'libs/typed.js/lib/typed.min.js' %}"></script>
+
+    <!-- Map -->
+    <script src='../../../api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js'></script>
+
+    <!-- Theme JS -->
+    <script src="{% static 'js/theme.min.js' %}"></script>
+    
+    <script type="text/javascript" src="{% static 'js/htmx.js' %}"></script>
+
+    <script>
+        document.body.addEventListener('htmx:configRequest', (event) => {
+           event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+        })
+    </script>
+
+
+</body>
+
+<!-- Mirrored from transvelo.github.io/skola-html/5.1/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 26 Jan 2022 12:13:15 GMT -->
+</html>

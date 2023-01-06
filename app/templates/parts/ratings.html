@@ -1,0 +1,30 @@
+<div class="star-rating">
+    {% if course.get_rating <= 0.5 %}
+        <div class="rating" style="width:10%;"></div>
+    {% elif course.get_rating <= 1%}
+        <div class="rating" style="width:20%;"></div>
+    {% elif course.get_rating <= 1.5%}
+        <div class="rating" style="width:30%;"></div>
+
+    {% elif course.get_rating <= 2%}
+        <div class="rating" style="width:40%;"></div>
+
+    {% elif course.get_rating <= 2.5%}
+        <div class="rating" style="width:50%;"></div>
+
+    {% elif course.get_rating <= 3%}
+        <div class="rating" style="width:60%;"></div>
+
+    {% elif course.get_rating <= 3.5%}
+        <div class="rating" style="width:70%;"></div>
+
+    {% elif course.get_rating <= 4%}
+        <div class="rating" style="width:80%;"></div>
+
+    {% elif course.get_rating <= 4.5%}
+        <div class="rating" style="width:90%;"></div>
+    
+    {% elif course.get_rating <= 5 %}
+        <div class="rating" style="width:100%;"></div>
+    {% endif %}
+</div>
