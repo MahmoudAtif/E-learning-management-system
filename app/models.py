@@ -25,7 +25,7 @@ class Category(models.Model):
     
 
 class Author(models.Model):
-    author = models.ForeignKey(User,on_delete=models.CASCADE , related_name='author_courses' , limit_choices_to={'is_instructor':True})
+    author = models.OneToOneField(User,on_delete=models.CASCADE , related_name='author_courses' , limit_choices_to={'is_instructor':True})
     name = models.CharField(max_length=100, null=True)
     image = models.ImageField(upload_to="author_images")
     description = models.TextField(null=True , blank=True)

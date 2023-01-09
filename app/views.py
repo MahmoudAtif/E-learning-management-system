@@ -136,25 +136,24 @@ def search(request):
     return render(request , 'pages/search.html',context)
 
 
-def course_details(request , slug):
+def course_details(request, slug):
+    
     try:
         course=Course.objects.get(slug=slug)
     except Course.DoesNotExist:
         return redirect('not_found')
-
     related_courses=Course.objects.filter(category=course.category).order_by('-id')
-    latest_courses=Course.objects.filter(author=course.author).order_by('-id')[:3]
+    latest_courses=Course.objects.filter(author=course.author).order_by('-id')[:3] 
+    
+    try: 
+        student=request.user.student
+        enroll_course=student.checkoutItems.get(course=course)  
+    except CheckoutItem.DoesNotExist:
+        enroll_course=None
     
     try:
-        student=Student.objects.get(student=request.user)
-        # enroll_course=CheckoutItem.objects.get(student=student , course=course)  
-        enroll_course=student.checkoutItems.get(course=course)  
-    except:
-        enroll_course=None
-
-    try:
-        cart=ShopCart.objects.filter(student=student , course=course)   
-    except:
+        cart=ShopCart.objects.get(student=student, course=course)
+    except ShopCart.DoesNotExist:
         cart=None
 
     context={
@@ -198,7 +197,7 @@ def not_found(request):
 @login_required(login_url='login_page')
 def enrolled_free_course(request,slug):
     course=Course.objects.get(slug=slug)
-    student=Student.objects.get(student=request.user)
+    student=request.user.student
     if course.price==0:
         if not CheckoutItem.objects.filter(student=student , course=course):
             checkout=Checkout()
@@ -224,19 +223,19 @@ def enrolled_free_course(request,slug):
 @login_required(login_url='login_page')
 def add_to_cart(request , slug):
     course=Course.objects.get(slug=slug)
-    student=Student.objects.get(student=request.user)
+    student=request.user.student
     if not ShopCart.objects.filter(student=student,course=course):
         ShopCart.objects.create(
             student=student,
             course=course,
             price=check_price(course),
             )
-        return redirect('shop_cart')
+    return redirect('shop_cart')
    
 
 def remove_cart(request , slug):
     course=Course.objects.get(slug=slug)
-    student=Student.objects.get(student=request.user)
+    student=request.user.student
     cart=ShopCart.objects.get(student=student ,course=course)
     cart.delete()
     return redirect(request.META['HTTP_REFERER'])
@@ -249,7 +248,7 @@ def shop_cart(request):
 @login_required(login_url='login_page')
 def checkout(request):
     if request.user.is_authenticated:
-        student=Student.objects.get(student=request.user)
+        student=request.user.student
         carts=ShopCart.objects.filter(student=student)
         total_price=0
         for item in carts:
@@ -310,7 +309,7 @@ class CheckoutComplete(DetailView):
 
 def my_courses(request):
     try:
-        student=Student.objects.get(student=request.user)
+        student=request.user.student
         courses=student.checkoutItems.all()
     except:
         return redirect('not_found')
@@ -342,7 +341,6 @@ def add_to_favourite(request,slug):
         course.favourite.add(request.user)
 
     return redirect(request.META['HTTP_REFERER'])
-from .decoratores import is_enrolled
 
 
 def watch_course(request , slug):
@@ -354,7 +352,7 @@ def watch_course(request , slug):
     except:
         video=None
     try:
-        student=Student.objects.get(student=request.user)
+        student=request.user.student
         enroll_course=student.checkoutItems.get(student=student , course=course)
     except CheckoutItem.DoesNotExist:
         enroll_course=None
@@ -395,16 +393,15 @@ def video_review(request , id ,slug):
 @login_required(login_url='login_page')
 def buy_now(request,slug):
     course=Course.objects.get(slug=slug)
-    student=Student.objects.get(student=request.user)
+    student=request.user.student
     if not course in ShopCart.objects.filter(student=student):
         ShopCart.objects.create(
         student=student,
         course=course,
         price=check_price(course)
         )
-        return redirect('checkout')
-    else:
-        return redirect('checkout')
+    return redirect('checkout')
+
 
 
 

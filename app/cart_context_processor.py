@@ -5,7 +5,8 @@ from user.models import Student
 
 def get_cart(request):
     try:
-        student=Student.objects.get(student=request.user)
+        # student=Student.objects.get(student=request.user)
+        student=request.user.student
         carts=student.student_carts.all()
         total_carts=student.student_carts.all().count()
         total_price=0

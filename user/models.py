@@ -17,7 +17,7 @@ class User(AbstractUser):
         return self.username
 
 class Student(models.Model):
-    student=models.ForeignKey(User, on_delete=models.CASCADE )
+    student=models.OneToOneField(User, on_delete=models.CASCADE )
     name=models.CharField(null=True,blank=True,max_length=50)
     image=models.ImageField(upload_to='student/images', null=True , blank=True)
     date_created=models.DateTimeField(auto_now_add=True)

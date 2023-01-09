@@ -14,17 +14,6 @@ def create_token(sender,instance , created , **kwargs):
         Token.objects.create(
             user=instance
         )   
-        if instance.is_student:
-            Student.objects.create(
-                student=instance,
-                name=instance.username
-
-            )
-        elif instance.is_instructor:
-            Author.objects.create(
-                author=instance,
-                name=instance.username,
-            )
 
 
 @receiver(post_save , sender=User)
