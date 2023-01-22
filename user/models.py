@@ -19,7 +19,7 @@ class User(AbstractUser):
 class Student(models.Model):
     student=models.OneToOneField(User, on_delete=models.CASCADE )
     name=models.CharField(null=True,blank=True,max_length=50)
-    image=models.ImageField(upload_to='student/images', null=True , blank=True)
+    image=models.ImageField(upload_to='student/images', default='image/defaultavatar.png',null=True , blank=True)
     date_created=models.DateTimeField(auto_now_add=True)
     date_updated=models.DateTimeField(auto_now=True)
 

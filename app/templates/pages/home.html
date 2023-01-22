@@ -1401,12 +1401,12 @@
                                 </ul>
                             </div>
 
-                            <a href="instructors-single.html" class="card-img sk-thumbnail img-ratio-4 card-hover-overlay card-hover-overlay-gradient-1 d-block"><img class="rounded shadow-light-lg img-fluid" src="{{instructor.image.url}}" alt="..."></a>
+                            <a href="{% url 'instructor_details' instructor.id %}" class="card-img sk-thumbnail img-ratio-4 card-hover-overlay card-hover-overlay-gradient-1 d-block"><img class="rounded shadow-light-lg img-fluid" src="{{instructor.image.url}}" alt="..."></a>
                         </div>
 
                         <!-- Footer -->
                         <div class="card-footer px-3 pt-4 pb-1">
-                            <a href="instructors-single.html" class="d-block"><h5 class="mb-0">{{instructor.name}}</h5></a>
+                            <a href="{% url 'instructor_details' instructor.id %}" class="d-block"><h5 class="mb-0">{{instructor.name}}</h5></a>
                             <span class="font-size-d-sm">{{instructor.description}}</span>
                         </div>
                     </div>

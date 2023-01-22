@@ -6,7 +6,7 @@
 #     def authenticate(self,  username=None, password=None, **kwargs):
 #         # UserModel = get_user_model()
 #         try:
-#             # to login with username or email 
+#             # to login with username or email
 #             user = User.objects.get( Q(username__iexact=username)| Q(email__iexact=username))
 #         except User.DoesNotExist:
 #             return None
@@ -18,7 +18,7 @@
 #     def get_user(self , user_id):
 #         try:
 #             user = User.objects.get(pk=user_id)
-        
+
 #         except User.DoesNotExist:
 #             return None
 #         return user if self.user_can_authenticate(user) else None

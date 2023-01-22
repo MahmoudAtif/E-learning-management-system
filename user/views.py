@@ -8,6 +8,7 @@ from django.shortcuts import redirect, render , HttpResponse
 from .forms import CreateUserForm,UserChangeForm
 from django.http import HttpResponse
 from.decorators import authenticated_user
+from .send_mail import send_registration_message
 # Create your views here.
 
 @authenticated_user
@@ -25,7 +26,7 @@ def login_func(request):
             return redirect('/')
         else:
             messages.warning(request , 'username or password is incorrect')
-            return redirect('/')
+            return redirect(request.META['HTTP_REFERER'])
 
     
 
@@ -46,7 +47,9 @@ def register(request):
             #     user.is_student=True
             # else:
             #     user.is_instructor=True 
+            send_registration_message(form.email)
             user.save()
+
             return redirect('login_page')
     else:
         form = CreateUserForm()
@@ -86,3 +89,4 @@ def profile(request):
 
 def for_test(request):
     return render(request, 'login.html')
+

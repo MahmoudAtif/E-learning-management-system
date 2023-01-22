@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,7 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Application definition
-AUTH_USER_MODEL="user.User"
+AUTH_USER_MODEL = "user.User"
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -44,8 +45,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_rest_passwordreset',
+    'django_elasticsearch_dsl',
 
 ]
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': ['http://localhost:9231']
+    }
+}
 
 # AUTHENTICATION_BACKENDS = [
 #     'django.contrib.auth.backends.ModelBackend',
@@ -100,9 +107,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'udemy',
         'USER': 'postgres',
-        'PASSWORD':'123',
-        'HOST':'localhost',
-        'PORT':'5432',
+        'PASSWORD': '123',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -143,19 +150,18 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-import os
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_ROOT= os.path.join(BASE_DIR , 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = 'static/'
-STATICFILE_DIRS=[
-    os.path.join(BASE_DIR , 'udemy/static')
+STATICFILE_DIRS = [
+    os.path.join(BASE_DIR, 'udemy/static')
 ]
 
-MEDIA_URL='/media/'
-MEDIA_ROOT=os.path.join(BASE_DIR , 'media')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -167,8 +173,6 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
 
-
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
@@ -178,3 +182,10 @@ EMAIL_HOST_PASSWORD = 'iwwyinompvtrcsru'
 
 
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+
+CELERY_BEAT_SCHEDULE = {
+    "SendHello": {
+        'task': 'user.tasks.test',
+        'schedule': 10  # every 10 secound
+    }
+}
