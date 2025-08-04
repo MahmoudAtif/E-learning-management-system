@@ -38,5 +38,4 @@ jobs:
           ssh-keyscan ssh.pythonanywhere.com >> ~/.ssh/known_hosts
 
       - name: Run deploy script on PythonAnywhere
-        run: |
-          ssh mahmoudateff07@ssh.pythonanywhere.com "bash ~/deploy.sh"
+        run: ssh mahmoudateff07@ssh.pythonanywhere.com "bash ~/deploy.sh"
