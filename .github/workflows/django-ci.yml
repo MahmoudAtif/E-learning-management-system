@@ -24,8 +24,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Set environment variables
+        run: |
+          echo "DEBUG=True" >> $GITHUB_ENV
+          echo "SECRET_KEY=dummy" >> $GITHUB_ENV
+
       - name: Run migrations
-        run: python manage.py migrate
+        run: python manage.py migrate --noinput
 
       - name: Run tests
-        run: python manage.py test
+        run: python manage.py test --verbosity=2
