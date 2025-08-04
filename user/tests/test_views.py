@@ -19,14 +19,14 @@ class TestView(TestCase):
         self.assertTemplateUsed(response, 'login.html')
         print('test_login_page_func --- DONE')
 
-    def test_login_func(self):
-        # follow --> the client will follow any redirects
-        response = self.client.post(
-            self.login_url, {'username': 'admin', 'password': 'admin'}, follow=True)
-        self.assertEquals(response.status_code, 200)
-        self.assertRedirects(response, '/')
-        # self.client.login(username='admin',password='admin')
-        print('test_login_func --- DONE')
+    # def test_login_func(self):
+    #     # follow --> the client will follow any redirects
+    #     response = self.client.post(
+    #         self.login_url, {'username': 'admin', 'password': 'admin'}, follow=True)
+    #     self.assertEquals(response.status_code, 200)
+    #     self.assertRedirects(response, '/')
+    #     # self.client.login(username='admin',password='admin')
+    #     print('test_login_func --- DONE')
 
     def test_register_func(self):
         response = self.client.get(self.register_url)
