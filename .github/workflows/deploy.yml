@@ -39,4 +39,4 @@ jobs:
 
       - name: Run deploy script on PythonAnywhere
         run: |
-          ssh your_username@ssh.pythonanywhere.com "bash ~/deploy.sh"
+          ssh mahmoudateff07@ssh.pythonanywhere.com "bash ~/deploy.sh"
