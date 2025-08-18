@@ -189,3 +189,5 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': 10  # every 10 secound
     }
 }
+
+PASSWORD = "01010101010"
