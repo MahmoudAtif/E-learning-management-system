@@ -14,9 +14,9 @@ class CheckoutView(viewsets.ModelViewSet):
     queryset = Checkout.objects.all()
     serializer_class = CheckoutSerializer
     permission_classes = [IsAuthenticated]
-    lookup_url_kwarg = 'checkout_id'
+    lookup_url_kwarg = "checkout_id"
 
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=["GET"])
     def student_checkouts(self, request, pk=None):
         try:
             student = Student.objects.get(id=pk)
@@ -24,9 +24,7 @@ class CheckoutView(viewsets.ModelViewSet):
             serializer = CheckoutSerializer(checkouts, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
-            response = {
-                'message': 'something wrong'
-            }
+            response = {"message": "something wrong"}
             return Response(response, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -73,16 +71,14 @@ class AuthorDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def search_api(request):
     try:
-        queryset = Course.objects.filter(title__contains=request.data['query'])
+        queryset = Course.objects.filter(title__contains=request.data["query"])
         serializers = CourseSerializer(queryset, many=True)
         return Response(serializers.data, status=status.HTTP_200_OK)
     except:
-        response = {
-            'message': 'not-found'
-        }
+        response = {"message": "not-found"}
         return Response(response, status=status.HTTP_404_NOT_FOUND)
 
 

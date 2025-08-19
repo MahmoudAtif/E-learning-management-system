@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from app.models import (Checkout, CheckoutItem, Section, Video, Course, Author)
+from app.models import Checkout, CheckoutItem, Section, Video, Course, Author
 from user.models import Student
 from django.db.models import Sum
 
@@ -7,7 +7,7 @@ from django.db.models import Sum
 class CheckoutItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CheckoutItem
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CheckoutSerializer(serializers.ModelSerializer):
@@ -15,13 +15,13 @@ class CheckoutSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Checkout
-        fields = ['student', 'price', 'items']
+        fields = ["student", "price", "items"]
 
 
 class VideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Video
-        fields = '__all__'
+        fields = "__all__"
 
 
 class SectionSerializer(serializers.ModelSerializer):
@@ -29,15 +29,15 @@ class SectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Section
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CourseSerializer(serializers.ModelSerializer):
     course_sections = SectionSerializer(read_only=True, many=True)
     # is_enrolled=serializers.SerializerMethodField('get_enrollment')
     # duration=serializers.SerializerMethodField('get_duration')
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-    rating = serializers.IntegerField(source='get_rating', read_only=True)
+    url = serializers.CharField(source="get_absolute_url", read_only=True)
+    rating = serializers.IntegerField(source="get_rating", read_only=True)
     uploaded_videos = serializers.ListField(
         child=serializers.FileField(allow_empty_file=False, use_url=False),
         write_only=True,
@@ -45,7 +45,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = '__all__'
+        fields = "__all__"
         # depth=1
 
     # def get_enrollment(self , course):
@@ -63,4 +63,4 @@ class AuthorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Author
-        fields = '__all__'
+        fields = "__all__"

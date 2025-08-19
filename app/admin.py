@@ -15,17 +15,17 @@ class RequirmentInlines(admin.TabularInline):
 
 
 class SectionAdmin(admin.ModelAdmin):
-    search_fields = ['name']
+    search_fields = ["name"]
 
 
 class VideoAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-    autocomplete_fields = ['section']
+    search_fields = ["name"]
+    autocomplete_fields = ["section"]
 
 
 class VideoInlines(admin.TabularInline):
     model = Video
-    fk_name = 'course'
+    fk_name = "course"
     # to modify extra
 
     def get_extra(self, request, obj=None, **kwargs):
@@ -58,9 +58,14 @@ class AdminMixins:
 
 class CourseAdmin(admin.ModelAdmin):
     inlines = (SkillInlines, RequirmentInlines, VideoInlines)
-    list_display = ['upper_case_title', 'author',
-                    'total_price', 'rating', 'status', ]
-    search_fields = ['title']
+    list_display = [
+        "upper_case_title",
+        "author",
+        "total_price",
+        "rating",
+        "status",
+    ]
+    search_fields = ["title"]
     view_on_site = False
     # list_display_links = None
 
@@ -71,19 +76,19 @@ class CourseAdmin(admin.ModelAdmin):
     # fields=('title','price')
 
     # to add action methods
-    actions = ['make_draft', 'make_published']
+    actions = ["make_draft", "make_published"]
 
-    ordering = ('-date_created',)
+    ordering = ("-date_created",)
     # to filter products with date
-    date_hierarchy = 'date_created'
+    date_hierarchy = "date_created"
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
         is_superuser = request.user.is_superuser
 
         if not is_superuser:
-            form.base_fields['price'].disabled = True
-            form.base_fields['title'].disabled = True
+            form.base_fields["price"].disabled = True
+            form.base_fields["title"].disabled = True
         return form
 
     def get_queryset(self, request):
@@ -96,7 +101,8 @@ class CourseAdmin(admin.ModelAdmin):
     make function to return object title with upper
 
     """
-    @admin.display(description='title')
+
+    @admin.display(description="title")
     def upper_case_title(self, obj):
         return obj.title.upper()
 
@@ -104,6 +110,7 @@ class CourseAdmin(admin.ModelAdmin):
     make function to return total price after dicount
 
     """
+
     @admin.display
     def total_price(self, obj):
         if obj.discount:
@@ -114,23 +121,33 @@ class CourseAdmin(admin.ModelAdmin):
     def rating(self, obj):
         return obj.get_rating
 
-    @admin.action(description='Mark selected courses as draft')
+    @admin.action(description="Mark selected courses as draft")
     def make_draft(self, request, queryset):
-        updated = queryset.update(status='DRAFT')
-        self.message_user(request, ngettext(
-            '%d course was successfully marked as DRAFT.',
-            '%d courses were successfully marked as DRAFT.',
-            updated,
-        ) % updated, messages.SUCCESS)
+        updated = queryset.update(status="DRAFT")
+        self.message_user(
+            request,
+            ngettext(
+                "%d course was successfully marked as DRAFT.",
+                "%d courses were successfully marked as DRAFT.",
+                updated,
+            )
+            % updated,
+            messages.SUCCESS,
+        )
 
-    @admin.action(description='Mark selected courses as publish')
+    @admin.action(description="Mark selected courses as publish")
     def make_published(self, request, queryset):
-        updated = queryset.update(status='PUBLISH')
-        self.message_user(request, ngettext(
-            '%d course was successfully marked as PUBLISH',
-            '%d courses were successfully marked as PUBLISH',
-            updated,
-        ) % updated, messages.SUCCESS)
+        updated = queryset.update(status="PUBLISH")
+        self.message_user(
+            request,
+            ngettext(
+                "%d course was successfully marked as PUBLISH",
+                "%d courses were successfully marked as PUBLISH",
+                updated,
+            )
+            % updated,
+            messages.SUCCESS,
+        )
 
 
 admin.site.register(Category)

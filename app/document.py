@@ -7,8 +7,8 @@ from django_elasticsearch_dsl.registries import registry
 class CourseDocument(Document):
 
     class Index:
-        name = 'courses'
+        name = "courses"
 
     class Django:
         model = Course
-        fields = ['title']
+        fields = ["title"]

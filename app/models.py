@@ -5,13 +5,15 @@ from django.utils.text import slugify
 from django.urls import reverse
 from user.models import Student
 from django.db.models import Avg, Sum
+
 # Create your models here.
 
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    icon = models.CharField(max_length=100, null=True,
-                            blank=True, default='fa-solid fa-ghost')
+    icon = models.CharField(
+        max_length=100, null=True, blank=True, default="fa-solid fa-ghost"
+    )
 
     @property
     def get_total_courses(self):
@@ -26,8 +28,12 @@ class Category(models.Model):
 
 
 class Author(models.Model):
-    author = models.OneToOneField(User, on_delete=models.CASCADE,
-                                  related_name='author_courses', limit_choices_to={'is_instructor': True})
+    author = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="author_courses",
+        limit_choices_to={"is_instructor": True},
+    )
     name = models.CharField(max_length=100, null=True)
     image = models.ImageField(upload_to="author_images")
     description = models.TextField(null=True, blank=True)
@@ -50,7 +56,8 @@ class Author(models.Model):
     @property
     def get_total_rating(self):
         total = CommentCourse.objects.filter(course__author=self).aggregate(
-            average=Avg('rate'), sum=Sum('rate'))
+            average=Avg("rate"), sum=Sum("rate")
+        )
         return total
 
     def __str__(self):
@@ -81,31 +88,35 @@ class Language(models.Model):
 
 class Course(models.Model):
     STATUS = (
-        ('PUBLISH', 'PUBLISH'),
-        ('DRAFT', 'DRAFT'),
+        ("PUBLISH", "PUBLISH"),
+        ("DRAFT", "DRAFT"),
     )
 
     CERTIFICATE = (
-        ('Yes', 'Yes'),
-        ('No', 'No'),
+        ("Yes", "Yes"),
+        ("No", "No"),
     )
 
     title = models.CharField(max_length=500)
     author = models.ForeignKey(
-        Author, on_delete=models.CASCADE, related_name='author_courses')
+        Author, on_delete=models.CASCADE, related_name="author_courses"
+    )
     category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, related_name='course_category', )
+        Category,
+        on_delete=models.CASCADE,
+        related_name="course_category",
+    )
     image = models.ImageField(upload_to="image")
     featured_video = models.CharField(max_length=300, null=True, blank=True)
     description = models.TextField()
-    level = models.ForeignKey(
-        Level, on_delete=models.CASCADE, null=True, blank=True)
+    level = models.ForeignKey(Level, on_delete=models.CASCADE, null=True, blank=True)
     price = models.IntegerField(default=0)
     discount = models.IntegerField(null=True, blank=True, default=0)
     slug = models.SlugField(max_length=500, blank=True, unique=True)
     status = models.CharField(choices=STATUS, max_length=100, null=True)
     certificate = models.CharField(
-        null=True, choices=CERTIFICATE, default='No', max_length=50)
+        null=True, choices=CERTIFICATE, default="No", max_length=50
+    )
     language = models.ForeignKey(Language, null=True, on_delete=models.CASCADE)
     favourite = models.ManyToManyField(User, blank=True)
     date_created = models.DateField(auto_now_add=True)
@@ -113,15 +124,15 @@ class Course(models.Model):
 
     @property
     def get_total(self):
-        total = self.price-(self.price * self.discount/100)
+        total = self.price - (self.price * self.discount / 100)
         return round(total, 2)
 
     @property
     def get_price_status(self):
         if self.price == 0:
-            status = 'free'
+            status = "free"
         else:
-            status = 'paid'
+            status = "paid"
         return status
 
     @property
@@ -158,8 +169,9 @@ class Course(models.Model):
 
     @property
     def get_rating(self):
-        rating = CommentCourse.objects.filter(
-            course=self).aggregate(average=Avg('rate'))['average']
+        rating = CommentCourse.objects.filter(course=self).aggregate(
+            average=Avg("rate")
+        )["average"]
         return rating
 
     @property
@@ -169,7 +181,7 @@ class Course(models.Model):
 
     @property
     def get_absolute_url(self):
-        return reverse('course_details', kwargs={'slug': self.slug})
+        return reverse("course_details", kwargs={"slug": self.slug})
 
     # @property
     # def get_rating_average(self):
@@ -190,7 +202,8 @@ class Course(models.Model):
 
 class Skill(models.Model):
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name='course_skills')
+        Course, on_delete=models.CASCADE, related_name="course_skills"
+    )
     point = models.CharField(max_length=100)
     date_created = models.DateField(auto_now_add=True)
     date_updated = models.DateField(auto_now=True)
@@ -201,7 +214,8 @@ class Skill(models.Model):
 
 class Requirment(models.Model):
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name='course_requirments')
+        Course, on_delete=models.CASCADE, related_name="course_requirments"
+    )
     point = models.CharField(max_length=100)
     date_created = models.DateField(auto_now_add=True)
     date_updated = models.DateField(auto_now=True)
@@ -212,26 +226,28 @@ class Requirment(models.Model):
 
 class Section(models.Model):
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name='course_sections')
+        Course, on_delete=models.CASCADE, related_name="course_sections"
+    )
     name = models.CharField(max_length=50)
     date_created = models.DateField(auto_now_add=True)
     date_updated = models.DateField(auto_now=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ["id"]
 
     def __str__(self):
-        return f'{self.name} - {self.course}'
+        return f"{self.name} - {self.course}"
 
 
 class Video(models.Model):
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name='course_videos')
+        Course, on_delete=models.CASCADE, related_name="course_videos"
+    )
     section = models.ForeignKey(
-        Section, on_delete=models.CASCADE, related_name='section_videos')
+        Section, on_delete=models.CASCADE, related_name="section_videos"
+    )
     name = models.CharField(max_length=50)
-    image = models.ImageField(
-        upload_to='video_course_image', null=True, blank=True)
+    image = models.ImageField(upload_to="video_course_image", null=True, blank=True)
     serial_number = models.IntegerField(null=True, blank=True)
     youtube_id = models.CharField(max_length=200, null=True, blank=True)
     time_duration = models.IntegerField(null=True, blank=True)
@@ -245,25 +261,28 @@ class Video(models.Model):
         return total
 
     def __str__(self):
-        return f'{str(self.name)} - {str(self.course)} '
+        return f"{str(self.name)} - {str(self.course)} "
 
 
 class ShopCart(models.Model):
     student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, related_name='student_carts')
+        Student, on_delete=models.CASCADE, related_name="student_carts"
+    )
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name='student_courses')
+        Course, on_delete=models.CASCADE, related_name="student_courses"
+    )
     price = models.DecimalField(max_digits=5, decimal_places=2)
     date_created = models.DateField(auto_now_add=True)
     date_updated = models.DateField(auto_now=True)
 
     def __str__(self):
-        return f'{str(self.student)} - {str(self.course)}'
+        return f"{str(self.student)} - {str(self.course)}"
 
 
 class Checkout(models.Model):
     student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, related_name='student_checkout')
+        Student, on_delete=models.CASCADE, related_name="student_checkout"
+    )
     price = models.DecimalField(max_digits=5, decimal_places=2)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
@@ -274,24 +293,29 @@ class Checkout(models.Model):
 
 class CheckoutItem(models.Model):
     student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, related_name='checkoutItems')
+        Student, on_delete=models.CASCADE, related_name="checkoutItems"
+    )
     checkout = models.ForeignKey(
-        Checkout, on_delete=models.CASCADE, related_name='items')
+        Checkout, on_delete=models.CASCADE, related_name="items"
+    )
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name='enrolled_courses')
+        Course, on_delete=models.CASCADE, related_name="enrolled_courses"
+    )
     price = models.DecimalField(max_digits=5, decimal_places=2)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{str(self.checkout)} - {str(self.course)}'
+        return f"{str(self.checkout)} - {str(self.course)}"
 
 
 class CommentCourse(models.Model):
     student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, related_name='student_comments')
+        Student, on_delete=models.CASCADE, related_name="student_comments"
+    )
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name='course_comments')
+        Course, on_delete=models.CASCADE, related_name="course_comments"
+    )
     title = models.CharField(max_length=50)
     comment = models.TextField(max_length=100)
     rate = models.FloatField(default=0)
@@ -300,16 +324,19 @@ class CommentCourse(models.Model):
     date_updated = models.DateField(auto_now=True)
 
     def __str__(self):
-        return f'{str(self.student)} - {str(self.course)}'
+        return f"{str(self.student)} - {str(self.course)}"
 
 
 class CommentVideo(models.Model):
     student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, related_name='student_video_comments')
+        Student, on_delete=models.CASCADE, related_name="student_video_comments"
+    )
     course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name='course_video')
+        Course, on_delete=models.CASCADE, related_name="course_video"
+    )
     video = models.ForeignKey(
-        Video, on_delete=models.CASCADE, related_name='video_comments')
+        Video, on_delete=models.CASCADE, related_name="video_comments"
+    )
     title = models.CharField(max_length=50)
     comment = models.TextField(max_length=100)
     like = models.ManyToManyField(Student, blank=True)
@@ -317,7 +344,7 @@ class CommentVideo(models.Model):
     date_updated = models.DateField(auto_now=True)
 
     def __str__(self):
-        return f'{str(self.student)} - {str(self.course)}'
+        return f"{str(self.student)} - {str(self.course)}"
 
 
 class Question(models.Model):

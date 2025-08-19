@@ -18,30 +18,21 @@ class SignInSerializer(serializers.Serializer):
     renderer_classes = (renderers.JSONRenderer,)
 
     def validate(self, attrs):
-        username = attrs.get('username')
-        password = attrs.get('password')
+        username = attrs.get("username")
+        password = attrs.get("password")
         if username and password:
             user = authenticate(username=username, password=password)
             if user is not None:
                 if not user.is_active:
-                    msg = 'user account is disabled'
-                    raise serializers.ValidationError({
-                        'status': 'error',
-                        'msg': msg
-                    })
+                    msg = "user account is disabled"
+                    raise serializers.ValidationError({"status": "error", "msg": msg})
             else:
-                msg = 'Unable to log in with provided crediential'
-                raise serializers.ValidationError({
-                    'status': 'error',
-                    'msg': msg
-                })
+                msg = "Unable to log in with provided crediential"
+                raise serializers.ValidationError({"status": "error", "msg": msg})
         else:
-            msg = 'Must include username and password'
-            raise serializers.ValidationError({
-                'status': 'error',
-                'msg': msg
-            })
-        attrs['user'] = user
+            msg = "Must include username and password"
+            raise serializers.ValidationError({"status": "error", "msg": msg})
+        attrs["user"] = user
         return attrs
 
 
@@ -52,8 +43,7 @@ class SignUpSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email',
-                  'password', 'is_student', 'is_instructor']
+        fields = ["id", "username", "email", "password", "is_student", "is_instructor"]
         # extra_kwargs={
         #     'password':{
         #         'write_only':True
@@ -61,7 +51,7 @@ class SignUpSerializer(serializers.ModelSerializer):
         # }
 
     def create(self, validated_data):
-        password = validated_data.pop('password', None)
+        password = validated_data.pop("password", None)
         user = self.Meta.model(**validated_data)
         if password is not None:
             user.set_password(password)
@@ -69,9 +59,9 @@ class SignUpSerializer(serializers.ModelSerializer):
             return user
 
     def validate(self, attrs):
-        email_exists = User.objects.filter(email=attrs['email']).exists()
+        email_exists = User.objects.filter(email=attrs["email"]).exists()
         if email_exists:
-            raise ValidationError('Email has already been used')
+            raise ValidationError("Email has already been used")
 
         # if not attrs['is_student'] and not attrs['is_instructor']:
         #     raise ValidationError('You should select user type')
@@ -87,4 +77,4 @@ class ChangePasswordSerializer(serializers.Serializer):
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = '__all__'
+        fields = "__all__"

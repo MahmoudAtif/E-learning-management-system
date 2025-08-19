@@ -9,13 +9,18 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('app', '0005_rename_questions_question'),
+        ("app", "0005_rename_questions_question"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='author',
-            name='author',
-            field=models.OneToOneField(limit_choices_to={'is_instructor': True}, on_delete=django.db.models.deletion.CASCADE, related_name='author_courses', to=settings.AUTH_USER_MODEL),
+            model_name="author",
+            name="author",
+            field=models.OneToOneField(
+                limit_choices_to={"is_instructor": True},
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="author_courses",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

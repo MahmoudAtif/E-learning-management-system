@@ -8,23 +8,27 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0001_initial'),
+        ("user", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='student',
-            name='student',
-            field=models.ForeignKey(limit_choices_to={'is_student': True}, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="student",
+            name="student",
+            field=models.ForeignKey(
+                limit_choices_to={"is_student": True},
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='is_instructor',
-            field=models.BooleanField(default=False, verbose_name='Instructor'),
+            model_name="user",
+            name="is_instructor",
+            field=models.BooleanField(default=False, verbose_name="Instructor"),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='is_student',
-            field=models.BooleanField(default=False, verbose_name='Student'),
+            model_name="user",
+            name="is_student",
+            field=models.BooleanField(default=False, verbose_name="Student"),
         ),
     ]
