@@ -1,5 +1,9 @@
 from .serializers import (
-    StudentSerializer, SignUpSerializer, SignInSerializer, ChangePasswordSerializer)
+    StudentSerializer,
+    SignUpSerializer,
+    SignInSerializer,
+    ChangePasswordSerializer,
+)
 from rest_framework import viewsets, status
 from rest_framework.pagination import PageNumberPagination
 from user.models import Student
@@ -28,13 +32,13 @@ class SignInView(APIView):
     def post(self, request):
         serializer = SignInSerializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.validated_data['user']
+            user = serializer.validated_data["user"]
             response = {
-                'message': 'logged in successfully',
-                'id': user.id,
-                'username': user.username,
-                'password': user.password,
-                'email': user.email,
+                "message": "logged in successfully",
+                "id": user.id,
+                "username": user.username,
+                "password": user.password,
+                "email": user.email,
             }
             return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -51,7 +55,7 @@ class SignUpView(APIView):
         serializer = SignUpSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            send_email_registeration.delay(request.data['email'])
+            send_email_registeration.delay(request.data["email"])
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -69,17 +73,13 @@ class ChangePasswordView(UpdateAPIView):
         self.object = self.get_object()
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            if not self.object.check_password(serializer.data.get('old_password')):
-                response = {
-                    'error': 'old_password is wrong'
-                }
+            if not self.object.check_password(serializer.data.get("old_password")):
+                response = {"error": "old_password is wrong"}
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
             else:
-                self.object.set_password(serializer.data.get('new_password'))
+                self.object.set_password(serializer.data.get("new_password"))
                 self.object.save()
-                response = {
-                    'message': 'Password Change Successfully'
-                }
+                response = {"message": "Password Change Successfully"}
                 return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

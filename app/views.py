@@ -8,8 +8,19 @@ from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.views import View
 from django.views.generic import ListView, DetailView
-from app.models import (Author, Category, Checkout, CheckoutItem,
-                        CommentCourse, Course, Level, ShopCart, Video, CommentVideo, Question)
+from app.models import (
+    Author,
+    Category,
+    Checkout,
+    CheckoutItem,
+    CommentCourse,
+    Course,
+    Level,
+    ShopCart,
+    Video,
+    CommentVideo,
+    Question,
+)
 from user.models import Student
 
 from .decoratores import *
@@ -56,31 +67,34 @@ from user.decorators import query_debugger
 #         else:
 #             messages.warning(request , 'email or password is incorrect')
 
+
 @query_debugger
 def home(request):
-    courses = Course.objects.select_related(
-        'author', 'category').filter(status="PUBLISH")
+    courses = Course.objects.select_related("author", "category").filter(
+        status="PUBLISH"
+    )
     instructors = Author.objects.all()[:5]
 
     context = {
-        'courses': courses,
-        'instructors': instructors,
+        "courses": courses,
+        "instructors": instructors,
     }
-    return render(request, 'pages/home.html', context)
+    return render(request, "pages/home.html", context)
 
 
 @query_debugger
 def courses(request):
     levels = Level.objects.all()
-    queryset = Course.objects.select_related(
-        'author', 'category').filter(status="PUBLISH")
+    queryset = Course.objects.select_related("author", "category").filter(
+        status="PUBLISH"
+    )
     authors = Author.objects.filter()[:4]
 
     freeCourses_count = Course.objects.filter(price=0).count()
     paidCourses_count = Course.objects.filter(price__gte=1).count()
 
     ############## Pagination ###########
-    page = request.GET.get('page', 1)
+    page = request.GET.get("page", 1)
     paginator = Paginator(queryset, 10)
     try:
         courses = paginator.page(page)
@@ -89,59 +103,60 @@ def courses(request):
     ############## EndPagination ###########
 
     context = {
-        'courses': courses,
-        'authors': authors,
-        'levels': levels,
-        'freeCourses_count': freeCourses_count,
-        'paidCourses_count': paidCourses_count,
+        "courses": courses,
+        "authors": authors,
+        "levels": levels,
+        "freeCourses_count": freeCourses_count,
+        "paidCourses_count": paidCourses_count,
     }
-    return render(request, 'pages/courses.html', context)
+    return render(request, "pages/courses.html", context)
 
 
 @query_debugger
 def contact(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         Question.objects.create(
             user=request.user,
-            name=request.POST.get('name'),
-            content=request.POST.get('content'),
+            name=request.POST.get("name"),
+            content=request.POST.get("content"),
         )
-        return HttpResponse('Thanks for you question')
-    return render(request, 'pages/contact_us.html')
+        return HttpResponse("Thanks for you question")
+    return render(request, "pages/contact_us.html")
 
 
 @query_debugger
 def about(request):
-    return render(request, 'pages/about.html')
+    return render(request, "pages/about.html")
 
 
 def filter_data(request):
-    category = request.GET.getlist('category[]')
-    level = request.GET.getlist('level[]')
-    price = request.GET.getlist('price[]')
+    category = request.GET.getlist("category[]")
+    level = request.GET.getlist("level[]")
+    price = request.GET.getlist("price[]")
 
-    if price == ['priceall']:
+    if price == ["priceall"]:
         courses = Course.objects.filter(status="PUBLISH")
-    elif price == ['pricefree']:
+    elif price == ["pricefree"]:
         courses = Course.objects.filter(price=0)
-    elif price == ['pricepaid']:
+    elif price == ["pricepaid"]:
         courses = Course.objects.filter(price__gte=1)
     elif category:
         courses = Course.objects.filter(category__id__in=category)
     elif level:
         courses = Course.objects.filter(level__id__in=level)
-    t = render_to_string('pages/courses.html', {'courses': courses})
-    return JsonResponse({'data': t})
+    t = render_to_string("pages/courses.html", {"courses": courses})
+    return JsonResponse({"data": t})
 
 
 def search(request):
-    search = request.GET['search']
-    courses = Course.objects.select_related('author', 'category').filter(
-        title__contains=search, status="PUBLISH")
+    search = request.GET["search"]
+    courses = Course.objects.select_related("author", "category").filter(
+        title__contains=search, status="PUBLISH"
+    )
     context = {
-        'courses': courses,
+        "courses": courses,
     }
-    return render(request, 'pages/search.html', context)
+    return render(request, "pages/search.html", context)
 
 
 @query_debugger
@@ -149,9 +164,10 @@ def course_details(request, slug):
 
     try:
         course = Course.objects.select_related(
-            'author', 'category', 'level', 'language').get(slug=slug)
+            "author", "category", "level", "language"
+        ).get(slug=slug)
     except Course.DoesNotExist:
-        return redirect('not_found')
+        return redirect("not_found")
 
     try:
         student = request.user.student
@@ -164,27 +180,29 @@ def course_details(request, slug):
     except:
         cart = None
 
-    related_courses = Course.objects.select_related(
-        'category').filter(category=course.category).order_by('-id')
-    latest_courses = Course.objects.filter(
-        author=course.author).order_by('-id')[:3]
+    related_courses = (
+        Course.objects.select_related("category")
+        .filter(category=course.category)
+        .order_by("-id")
+    )
+    latest_courses = Course.objects.filter(author=course.author).order_by("-id")[:3]
 
     context = {
-        'course': course,
-        'related_courses': related_courses,
-        'latest_courses': latest_courses,
-        'enroll_course': enroll_course,
-        'cart': cart,
+        "course": course,
+        "related_courses": related_courses,
+        "latest_courses": latest_courses,
+        "enroll_course": enroll_course,
+        "cart": cart,
     }
-    return render(request, 'pages/course_details.html', context)
+    return render(request, "pages/course_details.html", context)
 
 
 def add_review(request, slug):
-    if request.method == 'POST':
+    if request.method == "POST":
         course = Course.objects.get(slug=slug)
-        rating = request.POST.get('rating')
-        title = request.POST.get('title')
-        comment = request.POST.get('comment')
+        rating = request.POST.get("rating")
+        title = request.POST.get("title")
+        comment = request.POST.get("comment")
         if request.user.is_authenticated:
             student = Student.objects.get(student=request.user)
             new_comment = CommentCourse()
@@ -195,20 +213,20 @@ def add_review(request, slug):
             new_comment.rate = rating
             if not CommentCourse.objects.filter(student=student, course=course):
                 new_comment.save()
-                return HttpResponse('Success Review')
+                return HttpResponse("Success Review")
             else:
-                return HttpResponse('you are already Reviewed')
+                return HttpResponse("you are already Reviewed")
         else:
-            return HttpResponse('Login Required')
+            return HttpResponse("Login Required")
 
-    return redirect(request.META['HTTP_REFERER'])
+    return redirect(request.META["HTTP_REFERER"])
 
 
 def not_found(request):
-    return render(request, 'pages/not_found.html')
+    return render(request, "pages/not_found.html")
 
 
-@login_required(login_url='login_page')
+@login_required(login_url="login_page")
 def enrolled_free_course(request, slug):
     course = Course.objects.get(slug=slug)
     student = request.user.student
@@ -220,21 +238,18 @@ def enrolled_free_course(request, slug):
             checkout.save()
 
             CheckoutItem.objects.create(
-                student=student,
-                checkout=checkout,
-                course=course,
-                price=course.price
+                student=student, checkout=checkout, course=course, price=course.price
             )
-            messages.success(request, 'Course Successfully Enrolled')
+            messages.success(request, "Course Successfully Enrolled")
 
         else:
-            print('exist')
+            print("exist")
     else:
         pass
-    return redirect(request.META['HTTP_REFERER'])
+    return redirect(request.META["HTTP_REFERER"])
 
 
-@login_required(login_url='login_page')
+@login_required(login_url="login_page")
 def add_to_cart(request, slug):
     course = Course.objects.get(slug=slug)
     student = request.user.student
@@ -244,7 +259,7 @@ def add_to_cart(request, slug):
             course=course,
             price=check_price(course),
         )
-    return redirect('shop_cart')
+    return redirect("shop_cart")
 
 
 def remove_cart(request, slug):
@@ -252,16 +267,15 @@ def remove_cart(request, slug):
     student = request.user.student
     cart = ShopCart.objects.get(student=student, course=course)
     cart.delete()
-    return redirect(request.META['HTTP_REFERER'])
+    return redirect(request.META["HTTP_REFERER"])
 
 
 def shop_cart(request):
-    context = {
-    }
-    return render(request, 'pages/shop_cart.html', context)
+    context = {}
+    return render(request, "pages/shop_cart.html", context)
 
 
-@login_required(login_url='login_page')
+@login_required(login_url="login_page")
 def checkout(request):
     if request.user.is_authenticated:
         student = request.user.student
@@ -273,7 +287,7 @@ def checkout(request):
             else:
                 total_price += item.course.price
 
-        if request.method == 'POST':
+        if request.method == "POST":
             checkout = Checkout()
             checkout.student = student
             checkout.price = total_price
@@ -285,31 +299,25 @@ def checkout(request):
                 else:
                     price = item.course.price
                 CheckoutItem.objects.create(
-                    student=student,
-                    checkout=checkout,
-                    course=item.course,
-                    price=price
+                    student=student, checkout=checkout, course=item.course, price=price
                 )
                 item.delete()
-            return redirect('checkout_complete', checkout.id)
+            return redirect("checkout_complete", checkout.id)
     else:
         carts = None
-    context = {
-        'carts': carts,
-        'total_price': total_price
-    }
-    return render(request, 'pages/checkout.html', context)
+    context = {"carts": carts, "total_price": total_price}
+    return render(request, "pages/checkout.html", context)
 
 
 class CheckoutComplete(DetailView):
-    template_name = 'pages/completed.html'
+    template_name = "pages/completed.html"
     model = Checkout
-    context_object_name = 'checkout'
-    pk_url_kwarg = 'id'
+    context_object_name = "checkout"
+    pk_url_kwarg = "id"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['checkout_complete'] = True
+        context["checkout_complete"] = True
         return context
 
 
@@ -329,30 +337,24 @@ def my_courses(request):
         student = request.user.student
         courses = student.checkoutItems.all()
     except:
-        return redirect('not_found')
-    context = {
-        'courses': courses
-    }
-    return render(request, 'pages/mycourses.html', context)
+        return redirect("not_found")
+    context = {"courses": courses}
+    return render(request, "pages/mycourses.html", context)
 
 
 def favourite(request):
     courses = Course.objects.filter(favourite=request.user)
-    context = {
-        'courses': courses
-    }
-    return render(request, 'pages/favourite.html', context)
+    context = {"courses": courses}
+    return render(request, "pages/favourite.html", context)
 
 
 def instructor_details(request, id):
     instructor = Author.objects.get(id=id)
-    context = {
-        'instructor': instructor
-    }
-    return render(request, 'pages/instructor_details.html', context)
+    context = {"instructor": instructor}
+    return render(request, "pages/instructor_details.html", context)
 
 
-@login_required(login_url='login_page')
+@login_required(login_url="login_page")
 def add_to_favourite(request, slug):
     course = Course.objects.get(slug=slug)
     if request.user in course.favourite.all():
@@ -360,40 +362,39 @@ def add_to_favourite(request, slug):
     else:
         course.favourite.add(request.user)
 
-    return redirect(request.META['HTTP_REFERER'])
+    return redirect(request.META["HTTP_REFERER"])
 
 
 def watch_course(request, slug):
     course = Course.objects.get(slug=slug)
 
     try:
-        video_id = request.GET.get('video')
+        video_id = request.GET.get("video")
         video = Video.objects.get(id=video_id)
     except:
         video = None
     try:
         student = request.user.student
-        enroll_course = student.checkoutItems.get(
-            student=student, course=course)
+        enroll_course = student.checkoutItems.get(student=student, course=course)
     except CheckoutItem.DoesNotExist:
         enroll_course = None
 
     context = {
-        'watch_course': 'watch_course',
-        'course': course,
-        'enroll_course': enroll_course,
-        'video': video,
+        "watch_course": "watch_course",
+        "course": course,
+        "enroll_course": enroll_course,
+        "video": video,
     }
-    return render(request, 'pages/watch_course.html', context)
+    return render(request, "pages/watch_course.html", context)
 
 
 def video_review(request, id, slug):
     # video_id=request.GET.get('video')
     video = Video.objects.get(id=id)
-    if request.method == 'POST':
+    if request.method == "POST":
         course = Course.objects.get(slug=slug)
-        title = request.POST.get('title')
-        comment = request.POST.get('comment')
+        title = request.POST.get("title")
+        comment = request.POST.get("comment")
         if request.user.is_authenticated:
             student = Student.objects.get(student=request.user)
             new_comment = CommentVideo()
@@ -402,23 +403,23 @@ def video_review(request, id, slug):
             new_comment.video = video
             new_comment.title = title
             new_comment.comment = comment
-            if not CommentVideo.objects.filter(student=student, course=course, video=video):
+            if not CommentVideo.objects.filter(
+                student=student, course=course, video=video
+            ):
                 new_comment.save()
 
         else:
-            messages.warning(request, 'Login required')
+            messages.warning(request, "Login required")
 
-    return redirect(request.META['HTTP_REFERER'])
+    return redirect(request.META["HTTP_REFERER"])
 
 
-@login_required(login_url='login_page')
+@login_required(login_url="login_page")
 def buy_now(request, slug):
     course = Course.objects.get(slug=slug)
     student = request.user.student
     if not course in ShopCart.objects.filter(student=student):
         ShopCart.objects.create(
-            student=student,
-            course=course,
-            price=check_price(course)
+            student=student, course=course, price=check_price(course)
         )
-    return redirect('checkout')
+    return redirect("checkout")

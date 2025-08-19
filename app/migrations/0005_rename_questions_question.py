@@ -8,12 +8,12 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('app', '0004_questions'),
+        ("app", "0004_questions"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='Questions',
-            new_name='Question',
+            old_name="Questions",
+            new_name="Question",
         ),
     ]
