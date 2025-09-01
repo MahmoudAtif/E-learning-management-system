@@ -86,11 +86,6 @@ jobs:
       contents: read
       security-events: write
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'python' ]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -98,8 +93,8 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: ${{ matrix.language }}
-          config-file: .github/codeql/config.yml
+          languages: python
+          config-file: .github/codeql/config.yml 
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
