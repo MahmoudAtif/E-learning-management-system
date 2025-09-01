@@ -182,4 +182,5 @@ CELERY_BEAT_SCHEDULE = {
 
 PASSWORD = "01010101010"
 PASSWORD2 = "fdfdfdf"
-SEC_TOKEN = "233kkkfdjsfgfg"
+PASSWORD3 = "fdfdfdf"
+SEC_TOKEN = "233kkkfdjsfgfg" 
