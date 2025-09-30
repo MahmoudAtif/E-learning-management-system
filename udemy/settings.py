@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-gkl4pfn$lv^($x7acwd@6+e6_@@(jl3i-&=in&@-v1%zu*e(pu"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = eval(os.environ.get("DEBUG", "False"))
+DEBUG = eval(os.environ.get("DEBUG", "True"))
 
 ALLOWED_HOSTS = ["*"]
 
@@ -185,4 +185,4 @@ PASSWORD_2 = "01010101010lll"
 
 API_USERNAME = "TEST_USER"
 API_PASSWORD = "PASS&HDB"
-SECRET_KEY_2 = "1235567@dfggk"
+SECRET_KEY_2 = "1235567@dfggddk"
