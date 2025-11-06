@@ -5,6 +5,9 @@ from django.contrib import messages
 from django.utils.translation import ngettext
 from django.contrib.admin import SimpleListFilter
 from .object_actions import ObjectActionsMixin, object_action
+from django.urls import path
+from django.http import HttpResponse
+import csv
 
 # Register your models here.
 
@@ -123,6 +126,9 @@ class CourseAdmin(ObjectActionsMixin, admin.ModelAdmin):
     # Define object-level actions
     object_actions = ["publish_course", "make_draft_course"]
 
+    # Custom template for adding export button
+    change_list_template = "admin/app/course_changelist.html"
+
     # make fields editable
     # list_editable = ["status"]
 
@@ -152,6 +158,7 @@ class CourseAdmin(ObjectActionsMixin, admin.ModelAdmin):
     @object_action(
         label="Publish Course",
         confirm="Are you sure you want to make this course a publish?",
+        url_path="publishcourse",
     )
     def publish_course(self, request, obj):
         """Publish the course"""
@@ -228,6 +235,56 @@ class CourseAdmin(ObjectActionsMixin, admin.ModelAdmin):
     @admin.display(description="Ceritficated", boolean=True, ordering="certificate")
     def ceritficated(self, obj):
         return obj.certificate == "Yes" or False
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "export/",
+                self.admin_site.admin_view(self.export_courses),
+                name="app_course_export",
+            ),
+        ]
+        return custom_urls + urls
+
+    def export_courses(self, request):
+        """Export courses to CSV"""
+        queryset = self.get_queryset(request)
+
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="courses_export.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(
+            [
+                "Title",
+                "Author",
+                "Price",
+                "Discount",
+                "Total Price",
+                "Status",
+                "Certificate",
+                "Language",
+                "Rating",
+            ]
+        )
+
+        for course in queryset:
+            writer.writerow(
+                [
+                    course.title,
+                    course.author.name if course.author else "",
+                    course.price,
+                    course.discount,
+                    self.total_price(course),
+                    course.status,
+                    course.certificate,
+                    course.language,
+                    self.rating(course),
+                ]
+            )
+
+        return response
 
 
 class AuthorAdmin(admin.ModelAdmin):

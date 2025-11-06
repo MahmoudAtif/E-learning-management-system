@@ -15,11 +15,12 @@ Usage:
             obj.save()
             self.message_user(request, f'{obj} published successfully!')
 
-        @object_action(label='Archive', css_class='deletelink')
+        @object_action(label='Archive', css_class='deletelink', url_path='move-to-archive')
         def archive(self, request, obj):
             obj.is_archived = True
             obj.save()
             self.message_user(request, f'{obj} archived!')
+            # This will use URL: /admin/app/model/123/move-to-archive/
 """
 
 from django.contrib import messages
@@ -28,7 +29,7 @@ from django.urls import path
 from django.utils.html import format_html
 
 
-def object_action(label=None, css_class='default', confirm=None):
+def object_action(label=None, css_class="default", confirm=None, url_path=None):
     """
     Decorator to mark a method as an object-level action.
 
@@ -41,13 +42,17 @@ def object_action(label=None, css_class='default', confirm=None):
             - 'deletelink': Red delete button style
             - 'historylink': Gray history button style
         confirm: Optional confirmation message to show before executing
+        url_path: Custom URL path for the action (defaults to action name if not provided)
     """
+
     def decorator(func):
         func.is_object_action = True
-        func.action_label = label or func.__name__.replace('_', ' ').title()
+        func.action_label = label or func.__name__.replace("_", " ").title()
         func.action_css_class = css_class
         func.action_confirm = confirm
+        func.url_path = url_path
         return func
+
     return decorator
 
 
@@ -57,8 +62,9 @@ class ObjectActionsMixin:
 
     Add this mixin to your ModelAdmin class and define object_actions list.
     """
+
     object_actions = []
-    change_form_template = 'admin/object_actions_change_form.html'
+    change_form_template = "admin/object_actions_change_form.html"
 
     def get_object_actions(self, request, obj):
         """
@@ -68,13 +74,15 @@ class ObjectActionsMixin:
         actions = []
         for action_name in self.object_actions:
             method = getattr(self, action_name, None)
-            if method and hasattr(method, 'is_object_action'):
-                actions.append({
-                    'name': action_name,
-                    'label': method.action_label,
-                    'css_class': method.action_css_class,
-                    'confirm': method.action_confirm,
-                })
+            if method and hasattr(method, "is_object_action"):
+                actions.append(
+                    {
+                        "name": action_name,
+                        "label": method.action_label,
+                        "css_class": method.action_css_class,
+                        "confirm": method.action_confirm,
+                    }
+                )
         return actions
 
     def get_urls(self):
@@ -83,12 +91,16 @@ class ObjectActionsMixin:
         custom_urls = []
 
         for action_name in self.object_actions:
+            method = getattr(self, action_name, None)
+            # Use url_path if provided, otherwise use action_name
+            url_slug = method.url_path if (method and hasattr(method, 'url_path') and method.url_path) else action_name
+
             custom_urls.append(
                 path(
-                    f'<path:object_id>/{action_name}/',
+                    f"<path:object_id>/{url_slug}/",
                     self.admin_site.admin_view(self._object_action_view),
-                    name=f'{self.model._meta.app_label}_{self.model._meta.model_name}_{action_name}',
-                    kwargs={'action_name': action_name}
+                    name=f"{self.model._meta.app_label}_{self.model._meta.model_name}_{action_name}",
+                    kwargs={"action_name": action_name},
                 ),
             )
 
@@ -99,16 +111,15 @@ class ObjectActionsMixin:
         obj = self.get_object(request, object_id)
         method = getattr(self, action_name, None)
 
-        if not method or not hasattr(method, 'is_object_action'):
+        if not method or not hasattr(method, "is_object_action"):
             self.message_user(
-                request,
-                f'Action "{action_name}" not found.',
-                level=messages.ERROR
+                request, f'Action "{action_name}" not found.', level=messages.ERROR
             )
-            return redirect('admin:%s_%s_change' % (
-                self.model._meta.app_label,
-                self.model._meta.model_name
-            ), object_id)
+            return redirect(
+                "admin:%s_%s_change"
+                % (self.model._meta.app_label, self.model._meta.model_name),
+                object_id,
+            )
 
         # Execute the action
         result = method(request, obj)
@@ -117,18 +128,19 @@ class ObjectActionsMixin:
         if result:
             return result
 
-        return redirect('admin:%s_%s_change' % (
-            self.model._meta.app_label,
-            self.model._meta.model_name
-        ), object_id)
+        return redirect(
+            "admin:%s_%s_change"
+            % (self.model._meta.app_label, self.model._meta.model_name),
+            object_id,
+        )
 
-    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+    def changeform_view(self, request, object_id=None, form_url="", extra_context=None):
         """Add object actions to the context."""
         extra_context = extra_context or {}
 
         if object_id:
             obj = self.get_object(request, object_id)
             if obj:
-                extra_context['object_actions'] = self.get_object_actions(request, obj)
+                extra_context["object_actions"] = self.get_object_actions(request, obj)
 
         return super().changeform_view(request, object_id, form_url, extra_context)
