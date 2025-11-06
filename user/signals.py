@@ -26,7 +26,7 @@ def create_student_or_instructor(sender, instance, created, **kwargs):
                 name=instance.username,
             )
             Student.objects.create(
-                Student=instance,
+                student=instance,
                 name=instance.username,
             )
 

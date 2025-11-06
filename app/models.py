@@ -30,6 +30,7 @@ class Category(models.Model):
 class Author(models.Model):
     author = models.OneToOneField(
         User,
+        verbose_name="Author User",
         on_delete=models.CASCADE,
         related_name="author_courses",
         limit_choices_to={"is_instructor": True},
