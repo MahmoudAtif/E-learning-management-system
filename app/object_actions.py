@@ -93,7 +93,11 @@ class ObjectActionsMixin:
         for action_name in self.object_actions:
             method = getattr(self, action_name, None)
             # Use url_path if provided, otherwise use action_name
-            url_slug = method.url_path if (method and hasattr(method, 'url_path') and method.url_path) else action_name
+            url_slug = (
+                method.url_path
+                if (method and hasattr(method, "url_path") and method.url_path)
+                else action_name
+            )
 
             custom_urls.append(
                 path(
